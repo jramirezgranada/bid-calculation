@@ -1,6 +1,6 @@
 <div>
     <div class="grid gap-6 mb-6 justify-items-center">
-        <form class="w-full max-w-sm">
+        <form class="w-full max-w-sm" wire:submit.prevent="submit">
             <div class="md:flex md:items-center mb-6">
                 <div class="md:w-1/3">
                     <x-input-label for="budget" :value="__('Budget')"/>
@@ -8,14 +8,16 @@
                 <div class="md:w-2/3">
                     <x-text-input id="budget" class="block mt-1 w-full" type="text" name="budget" :value="old('budget')"
                                   required autofocus wire:model="budget"/>
+                    @error('budget') <span class="text-red-600">{{ $message }}</span> @enderror
                 </div>
+
             </div>
             <div class="md:flex md:items-center">
                 <div class="md:w-1/3"></div>
                 <div class="md:w-2/3">
-                    <x-non-primary-button class="ml-3" wire:click="calculateVehicleAmount">
+                    <x-primary-button class="ml-3">
                         Calculate
-                    </x-non-primary-button>
+                    </x-primary-button>
                     <x-other-button class="ml-3" wire:click="resetForm">
                         Reset
                     </x-other-button>

@@ -28,6 +28,13 @@ class VehicleCalculator extends Component
     public $calculationResult;
 
     /**
+     * @var array
+     */
+    protected $rules = [
+        'budget' => 'numeric'
+    ];
+
+    /**
      * @return Application|Factory|View
      */
     public function render(): View|Factory|Application
@@ -38,8 +45,11 @@ class VehicleCalculator extends Component
     /**
      * @return void
      */
-    public function calculateVehicleAmount(): void
+    public function submit(): void
     {
+        $this->showResults = false;
+        $this->validate();
+
         $this->calculationResult = $this->calculateMaxVehicleAmount($this->budget);
         $this->showResults = true;
     }

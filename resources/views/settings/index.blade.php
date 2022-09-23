@@ -20,6 +20,13 @@
                             </ul>
                         </div>
                     @endif
+                    @if(\Illuminate\Support\Facades\Session::has('success'))
+                        <div
+                            class="p-4 mb-4 text-sm text-green-700 bg-green-100 rounded-lg dark:bg-green-200 dark:text-green-800"
+                            role="alert">
+                            {{ \Illuminate\Support\Facades\Session::get('success') }}
+                        </div>
+                    @endif
                     <div class="grid gap-6 mb-6 justify-items-center">
                         <form class="w-full max-w-sm" method="post" action="{{ route('save-fees') }}">
                             @csrf

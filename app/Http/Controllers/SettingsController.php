@@ -8,6 +8,7 @@ use App\Models\Fee;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Session;
 
 class SettingsController extends Controller
 {
@@ -30,6 +31,7 @@ class SettingsController extends Controller
             Fee::where('slug', $fee['slug'])->update(['value' => (double)$fee['value']]);
         }
 
+        Session::flash('success', 'Settings were updated, successfully !!');
         return redirect()->route('settings');
     }
 }

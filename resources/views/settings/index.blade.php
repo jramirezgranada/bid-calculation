@@ -42,7 +42,7 @@
                             <div class="md:flex md:items-center">
                                 <div class="md:w-1/3"></div>
                                 <div class="md:w-2/3">
-                                    <x-primary-button class="ml-3" type="submit">
+                                    <x-primary-button class="ml-3">
                                         Save
                                     </x-primary-button>
                                 </div>

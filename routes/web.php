@@ -18,12 +18,15 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth'])->name('dashboard');
+Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->middleware(['auth'])->name('dashboard');
 
-Route::get('settings', [SettingsController::class, 'index'])->name('settings');
-Route::post('settings/fees', [SettingsController::class, 'saveFees'])->name('save-fees');
-Route::post('settings/association-fees', [SettingsController::class, 'saveAssociationsFee'])->name('save-associations-fee');
+    Route::get('settings', [SettingsController::class, 'index'])->name('settings');
+    Route::post('settings/fees', [SettingsController::class, 'saveFees'])->name('save-fees');
+    Route::post('settings/association-fees', [SettingsController::class, 'saveAssociationsFee'])->name('save-associations-fee');
+});
+
 
 require __DIR__ . '/auth.php';

@@ -13,9 +13,9 @@
             <div class="md:flex md:items-center">
                 <div class="md:w-1/3"></div>
                 <div class="md:w-2/3">
-                    <x-primary-button class="ml-3" wire:click="calculateVehicleAmount">
+                    <x-non-primary-button class="ml-3" wire:click="calculateVehicleAmount">
                         Calculate
-                    </x-primary-button>
+                    </x-non-primary-button>
                     <x-other-button class="ml-3" wire:click="resetForm">
                         Reset
                     </x-other-button>

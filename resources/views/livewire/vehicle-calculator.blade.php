@@ -7,7 +7,7 @@
                 </div>
                 <div class="md:w-2/3">
                     <x-text-input id="budget" class="block mt-1 w-full" type="text" name="budget" :value="old('budget')"
-                                  required autofocus wire:model="budget"/>
+                                  autofocus wire:model="budget"/>
                     @error('budget') <span class="text-red-600">{{ $message }}</span> @enderror
                 </div>
 

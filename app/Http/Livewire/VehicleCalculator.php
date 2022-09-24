@@ -31,7 +31,7 @@ class VehicleCalculator extends Component
      * @var array
      */
     protected $rules = [
-        'budget' => 'numeric'
+        'budget' => 'required|numeric'
     ];
 
     /**

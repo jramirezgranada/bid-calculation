@@ -57,7 +57,9 @@ trait CalculatorTrait
                 'vehicle_cost' => 0,
                 'budget' => $this->budget,
             ];
-        } else if ($maxTaxedAssociated->getAttributes() === $minTaxedAssociated->getAttributes()) {
+        } else if (!is_null($maxTaxedAssociated) && !is_null($minTaxedAssociated) &&
+            $maxTaxedAssociated->getAttributes() === $minTaxedAssociated->getAttributes()
+        ) {
             $this->associationFee = $maxTaxedAssociated->amount_value;
         } else if (empty($maxTaxedAssociatedArray)) {
             $this->associationFee = $minTaxedAssociated->amount_value;

@@ -26,7 +26,6 @@ Route::middleware('auth')->group(function () {
 
     Route::get('settings', [SettingsController::class, 'index'])->name('settings');
     Route::post('settings/fees', [SettingsController::class, 'saveFees'])->name('save-fees');
-    Route::post('settings/association-fees', [SettingsController::class, 'saveAssociationsFee'])->name('save-associations-fee');
 });
 
 

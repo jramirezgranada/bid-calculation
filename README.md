@@ -14,6 +14,7 @@
 - Run migrations and seeders: `vendor/bin/sail artisan migrate:fresh --seed`
 - Install front end dependencies: `vendor/bin/sail npm install`
 - Compile front end assets: `vendor/bin/sail npm run dev`
+- Run `vendor/bin/sail npm run build`
 - Open app in local: `http://localhost`
 
 ### Development Notes:

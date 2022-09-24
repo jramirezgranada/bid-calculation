@@ -23,6 +23,8 @@
 1. Development user:
     * email: `admin@admin.com`
     * password: `password`
+2. You can edit some fees going to `http://localhost/settings` or clicking in the username at the top of
+   the page and then Settings
 
 ### Problem Notes
 

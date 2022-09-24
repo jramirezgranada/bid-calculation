@@ -2,7 +2,7 @@
 
 namespace App\Http\Livewire;
 
-use App\Traits\CalculatorTrait;
+use App\Services\CalculatorService;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -10,8 +10,6 @@ use Livewire\Component;
 
 class VehicleCalculator extends Component
 {
-    use CalculatorTrait;
-
     /**
      * @var bool
      */
@@ -28,11 +26,25 @@ class VehicleCalculator extends Component
     public $calculationResult;
 
     /**
+     * @var CalculatorService
+     */
+    private CalculatorService $calculatorService;
+
+    /**
      * @var array
      */
     protected $rules = [
         'budget' => 'required|numeric'
     ];
+
+    /**
+     * @param $id
+     */
+    public function __construct($id = null)
+    {
+        $this->calculatorService = new CalculatorService();
+        parent::__construct($id);
+    }
 
     /**
      * @return Application|Factory|View
@@ -50,7 +62,7 @@ class VehicleCalculator extends Component
         $this->showResults = false;
         $this->validate();
 
-        $this->calculationResult = $this->calculateMaxVehicleAmount($this->budget);
+        $this->calculationResult = $this->calculatorService->calculateMaxVehicleAmount($this->budget);
         $this->showResults = true;
     }
 

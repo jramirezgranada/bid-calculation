@@ -1,31 +1,18 @@
 <?php
 
-namespace App\Traits;
+namespace App\Services;
 
 use App\Models\AssociationFee;
 use App\Models\Fee;
 
-trait CalculatorTrait
+class CalculatorService
 {
     /**
-     * @var float
+     * @param int $precision
      */
-    protected float $specialFee;
-
-    /**
-     * @var float
-     */
-    protected float $basicFee;
-
-    /**
-     * @var float
-     */
-    protected float $associationFee;
-
-    /**
-     * @var int
-     */
-    protected int $precision = 2;
+    public function __construct(private int $precision = 2)
+    {
+    }
 
     /**
      * @param float $budget
@@ -55,39 +42,39 @@ trait CalculatorTrait
                 'association_fee' => 0,
                 'storage_fee' => 0,
                 'vehicle_cost' => 0,
-                'budget' => $this->budget,
+                'budget' => $budget,
             ];
         } else if (!is_null($maxTaxedAssociated) && !is_null($minTaxedAssociated) &&
             $maxTaxedAssociated->getAttributes() === $minTaxedAssociated->getAttributes()
         ) {
-            $this->associationFee = $maxTaxedAssociated->amount_value;
+            $associationFee = $maxTaxedAssociated->amount_value;
         } else if (empty($maxTaxedAssociatedArray)) {
-            $this->associationFee = $minTaxedAssociated->amount_value;
+            $associationFee = $minTaxedAssociated->amount_value;
         } else {
-            $this->associationFee = $maxTaxedAssociated->amount_value;
+            $associationFee = $maxTaxedAssociated->amount_value;
         }
 
         if ($maxTaxedAmount * $basicFeePercent > $basicFeeMaxVal && $minTaxedAmount * $basicFeePercent > $basicFeeMaxVal) {
-            $this->basicFee = $basicFeeMaxVal;
+            $basicFee = $basicFeeMaxVal;
         } else if ($maxTaxedAmount * $basicFeePercent < $basicFeeMinVal && $minTaxedAmount * $basicFeePercent < $basicFeeMinVal) {
-            $this->basicFee = $basicFeeMinVal;
+            $basicFee = $basicFeeMinVal;
         } else {
-            $this->basicFee = round(($maxAmount - $this->associationFee) / 112 * 10, $this->precision, PHP_ROUND_HALF_UP);
+            $basicFee = round(($maxAmount - $associationFee) / 112 * 10, $this->precision, PHP_ROUND_HALF_UP);
         }
 
-        if ($this->basicFee != 0) {
-            $maxAmount = round(($maxAmount - $this->associationFee - $this->basicFee) / 102 * 100, $this->precision, PHP_ROUND_HALF_UP);
-            $this->specialFee = round($maxAmount * $specialFee, $this->precision, PHP_ROUND_HALF_UP);
+        if ($basicFee != 0) {
+            $maxAmount = round(($maxAmount - $associationFee - $basicFee) / 102 * 100, $this->precision, PHP_ROUND_HALF_UP);
+            $specialFee = round($maxAmount * $specialFee, $this->precision, PHP_ROUND_HALF_UP);
 
         }
 
         return [
-            'special_fee' => $this->specialFee,
-            'basic_fee' => $this->basicFee,
-            'association_fee' => $this->associationFee,
+            'special_fee' => $specialFee,
+            'basic_fee' => $basicFee,
+            'association_fee' => $associationFee,
             'storage_fee' => $storageFee,
             'vehicle_cost' => $maxAmount,
-            'budget' => $this->budget,
+            'budget' => $budget,
         ];
     }
 

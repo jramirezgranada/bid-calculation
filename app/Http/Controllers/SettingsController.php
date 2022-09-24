@@ -5,17 +5,16 @@ namespace App\Http\Controllers;
 use App\Http\Requests\UpdateFeesRequest;
 use App\Models\AssociationFee;
 use App\Models\Fee;
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Session;
 
 class SettingsController extends Controller
 {
     /**
-     * @return Application|Factory|View
+     * @return View
      */
-    public function index(): Application|Factory|View
+    public function index(): View
     {
         $fees = Fee::all();
         $associationFees = AssociationFee::all();
@@ -23,7 +22,11 @@ class SettingsController extends Controller
         return view('settings.index')->with(compact('fees', 'associationFees'));
     }
 
-    public function saveFees(UpdateFeesRequest $request)
+    /**
+     * @param UpdateFeesRequest $request
+     * @return RedirectResponse
+     */
+    public function saveFees(UpdateFeesRequest $request): RedirectResponse
     {
         $fees = $request->all();
 

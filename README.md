@@ -64,6 +64,7 @@
 
 - 2 of 7 use cases are not passing
 - We can just update the fixed and variable cost but association matrix
+- A couple use cases are not well formulated from the document
 
 ### Tech Stack
 

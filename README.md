@@ -1,66 +1,76 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+### System Requirements
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+1. Docker
+2. Local PHP 8 and Composer
 
-## About Laravel
+### Installation Steps
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- Clone this repository
+- Create `.env` file: `cp .env.example .env`
+- Install dependencies `composer install`
+- Generate system key: `php artisan key:generate`
+- Install laravel sail: `php artisan sail:install` and enter 0 to install mysql
+- Create development environment: `vendor/bin/sail up -d`
+- Run migrations and seeders: `vendor/bin/sail artisan migrate:fresh --seed`
+- Install front end dependencies: `vendor/bin/sail npm install`
+- Compile front end assets: `vendor/bin/sail npm run dev`
+- Open app in local: `http://localhost`
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### Development Notes:
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+1. Development user:
+    * email: `admin@admin.com`
+    * password: `password`
 
-## Learning Laravel
+### Problem Notes
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- The initial max vehicle amount is calculated with this operation `maxAmount = budget - storage_fee`
+- After that we need to calculate the MaxTaxedAmount and MinTaxedAmount:
+    * The MaxTaxedAmount is calculated with this operation: `(maxAmount - basicMaxFee) / 102 * 100`
+    * The MinTaxedAmount is calculated with this operation: `(maxAmount - basicMinFee) / 102 * 100`
+    * Note: is calculated base on 102% since the max vehicle amount (100%) + special fee (2%) = 102%
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+    - We need to calculate the MaxAssociatedCost and MinAssociatedCost finding the data in the association_fees table in
+      db:
+        * MaxAssociatedCost: `select * from association_fees where amount_from <= MaxTaxedAmount and
+          amount_to >= MaxTaxedAmount`
+        * MinAssociatedCost: `select * from association_fees where amount_from <= MixTaxedAmount and
+          amount_to >= MixTaxedAmount`
+- After previous calculation we validate if both objects are empty, if so, then we will return all fees in 0.
+- If MaxAssociatedCost is empty then the association cost value will be the value found in the MinAssociatedCost
+- Else, we get the value from MaxAssociatedCost
+- In this way we get the associated cost for the vehicle cost.
+- To get the basic fee according to the rules we need to validate this:
+    * if `$maxTaxedAmount * $basicFeePercent > $basicFeeMaxVal && $minTaxedAmount * $basicFeePercent > $basicFeeMaxVal`
+      Then we take the max value = 50.
+    * if `$maxTaxedAmount * $basicFeePercent < $basicFeeMinVal && $minTaxedAmount * $basicFeePercent < $basicFeeMinVal`
+      Then we take the min value = 10.
+    * else, we calculate the basic fee based on the 10% of the vehicle max amount price.
+- The last step is tu calculate the max amount of the vehicle and this is get it from this operation:
+    * `newMaxAmount = (maxAmount - associationFee - basicFee) / 102 * 100`
+    * And to calculate the special fee `newMaxAmount * specialFeePercent`
+- The values are returned to show in the app.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Other way to solve
 
-## Laravel Sponsors
+- The other way found is from this calculation `maxAmount = budget - storage_fee`
+- After the maxAmount is calculated in a while statement or do/while statement we start to do this
+  `maxAmount = maxAmount - 0.1` 0.1 means 1 cent of dollar.
+- We start to calculate the basicFee, specialFee, associationCosts, storageFee and if the sum of all of them plus the
+  amount is greater than the budget we continue on the bucle until is equal or less than the budget.
+- Also if we don't want to use the while or do/while statement we can use recursive functions to solve the problem.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+### Comments
 
-### Premium Partners
+- 2 of 7 use cases are not passing
+- We can just update the fixed and variable cost but association matrix
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+### Tech Stack
 
-## Contributing
+- Laravel 9
+- PHP 8
+- MySQL
+- NPM
+- Laravel Livewire
+- Tailwind CSS
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).

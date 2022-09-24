@@ -15,6 +15,7 @@
 - Install front end dependencies: `vendor/bin/sail npm install`
 - Compile front end assets: `vendor/bin/sail npm run dev`
 - Run `vendor/bin/sail npm run build`
+- Run tests `vendor/bin/sail tests`
 - Open app in local: `http://localhost`
 
 ### Development Notes:
